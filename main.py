@@ -8,7 +8,7 @@ import re
 from typing import Optional
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
+
 
 API_SECRET_KEY = os.getenv("API_SECRET_KEY", "change-secret-key-2026")
 
@@ -34,7 +34,7 @@ class AsyncBrowserThread(threading.Thread):
         self.playwright = await async_playwright().start()
         self.browser = await self.playwright.chromium.launch(
             headless=True,
-           # channel="chrome",
+            channel="chrome",
             args=[
                 '--disable-blink-features=AutomationControlled',
                 '--no-sandbox',
@@ -273,13 +273,6 @@ def parse_tool_calls(response_text):
 # FastAPI App
 # ====================================================================
 app = FastAPI(title="mse_ai_api for n8n")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 @app.post("/v1/chat/completions")
 async def chat_completions(request: Request):
@@ -352,8 +345,8 @@ async def chat_completions(request: Request):
                     "total_tokens": p_tokens + c_tokens
                 }
             }
-  except Exception as e:
-    return JSONResponse(status_code=500, content={"error": str(e)})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @app.post("/v1/responses")
 async def responses(request: Request):
