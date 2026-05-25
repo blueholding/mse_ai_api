@@ -273,6 +273,16 @@ def parse_tool_calls(response_text):
 # FastAPI App
 # ====================================================================
 app = FastAPI(title="mse_ai_api for n8n")
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.post("/v1/chat/completions")
 async def chat_completions(request: Request):
@@ -450,4 +460,8 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=7777)
+    uvicorn.run(
+    app,
+    host="0.0.0.0",
+    port=int(os.environ.get("PORT", 7777))
+)
